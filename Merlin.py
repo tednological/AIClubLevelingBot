@@ -69,7 +69,7 @@ missions = [
         ],
         "completion_deed": "Complete the following tasks: 1. Impute the missing values of the PurityLevel and Quantity column with the mean or average. 2. Filter out the Spoiled ingredients. 3. Scale PurityLevel and Quantity to a range of 0 to 1 for consistent potion preparation.",
         "xp_reward": 75
-    }
+    },
     {
         "name": "The Summoning of Regression Spirits",
         "description": "Create a simple linear regression model using scikit-learn to predict a numeric outcome.",
