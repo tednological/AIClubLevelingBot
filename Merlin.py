@@ -140,7 +140,7 @@ badges = [
         ]
     },
     {
-        "name": "Neural Alchemist",
+        "name": "Neural Necromancer",
         "description": "Awarded to them who harness neural networks to create powerful spells.",
         "missions": [
             "Perceptron Incantations",
