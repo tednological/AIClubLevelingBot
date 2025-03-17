@@ -40,7 +40,7 @@ missions = [
     },
     {
         "name": "Illuminating the Graphical Leylines",
-        "description": "Shape mystical graphs from data using Matplotlib’s visualization spells.",
+        "description": "Shape mystical graphs from data using Matplotlib's visualization spells.",
         "materials": [
             "https://matplotlib.org/stable/tutorials/introductory/quick_start.html",
             "https://www.youtube.com/watch?v=3Xc3CA655Y4"
@@ -55,7 +55,7 @@ missions = [
             "https://www.w3schools.com/sql/default.asp",
             "https://www.youtube.com/watch?v=kbKty5ZVKMY"
         ],
-        "completion_deed": "Construct SQL statements for the following situations. You have gained access to an evil lich's databased named 'DOOM' that contains all of the information about its minions. First, find out how many opponents you face by returning the number of entries in the MINON_ID column. Second, gauge the strength of the lich's minions by returning the list of minions that have at least a 7 in the 'Power' column. Finally, find the most powerful minion of the lich by returning the minion with the highest 'Power' in the 'DOOM' database.",
+        "completion_deed": "Construct SQL statements for the following situation. You have gained access to an evil lich's databased named 'DOOM' that contains all of the information about its minions. First, find out how many opponents you face by returning the number of entries in the MINON_ID column. Second, gauge the strength of the lich's minions by returning the list of minions that have at least a 7 in the 'Power' column. Finally, find the most powerful minion of the lich by returning the minion with the highest 'Power' in the 'DOOM' database.",
         "xp_reward": 75
     },
     {
@@ -69,6 +69,46 @@ missions = [
         ],
         "completion_deed": "Complete the following tasks: 1. Impute the missing values of the PurityLevel and Quantity column with the mean or average. 2. Filter out the Spoiled ingredients. 3. Scale PurityLevel and Quantity to a range of 0 to 1 for consistent potion preparation.",
         "xp_reward": 75
+    }
+    {
+        "name": "The Summoning of Regression Spirits",
+        "description": "Create a simple linear regression model using scikit-learn to predict a numeric outcome.",
+        "materials": [
+            "https://datagy.io/python-sklearn-linear-regression/",
+            "https://www.geeksforgeeks.org/python-linear-regression-using-sklearn/"
+        ],
+        "completion_deed": "Show a Python script that loads a small dataset, splits it into train/test sets, trains a linear regression model, and outputs the coefficients or RMSE of your model.",
+        "xp_reward": 100
+    },
+    {
+        "name": "Classification Conjuration",
+        "description": "Use your conjuring powers to perform a classification with scikit-learn.",
+        "materials": [
+            "https://www.geeksforgeeks.org/ml-logistic-regression-using-python/",
+            "https://www.datacamp.com/tutorial/understanding-logistic-regression-python"
+        ],
+        "completion_deed": "Present a Python script that trains a classification model (e.g., logistic regression or decision tree) on a dataset of your choice, then prints the accuracy score and a confusion matrix.",
+        "xp_reward": 125
+    },
+    {
+        "name": "Perceptron Incantations",
+        "description": "Train a simple feed-forward neural network using Keras or PyTorch on a small dataset.",
+        "materials": [
+            "https://www.tensorflow.org/tutorials/quickstart/beginner",
+            "https://pytorch.org/tutorials/beginner/blitz/neural_networks_tutorial.html"
+        ],
+        "completion_deed": "Present a Python script that trains a basic neural net (e.g., on MNIST) and reports final training & test accuracies.",
+        "xp_reward": 150
+    },
+    {
+        "name": "The Convolutional Summoning",
+        "description": "Harness convolutional neural networks (CNNs) for image classification.",
+        "materials": [
+            "https://www.geeksforgeeks.org/introduction-convolution-neural-network/",
+            "https://www.tensorflow.org/tutorials/images/cnn"
+        ],
+        "completion_deed": "Construct a CNN (using Keras, Tensorflow, or PyTorch) that classifies a small image dataset (e.g., CIFAR-10). Show final test accuracy or confusion matrix.",
+        "xp_reward": 200
     }
 ]
 
@@ -89,6 +129,22 @@ badges = [
         "missions": [
             "Scrying SQL Databases",
             "Potion Brewing and Preprocessing"
+        ]
+    },
+    {
+        "name": "Machine Mage",
+        "description": "Awarded to those who harness the power of machine learning spells.",
+        "missions": [
+            "The Summoning of Regression Spirits",
+            "Classification Conjuration"
+        ]
+    },
+    {
+        "name": "Neural Alchemist",
+        "description": "Awarded to them who harness neural networks to create powerful spells.",
+        "missions": [
+            "Perceptron Incantations",
+            "The Convolutional Summoning"
         ]
     }
 ]
@@ -164,11 +220,14 @@ def user_awarded_badges(user_id):
     rows = cursor.fetchall()
     return [row[0] for row in rows]
 
-# Simple level thresholds (kept for display in status, if y'all fancy)
+# Simple level thresholds
 level_thresholds = [
     (1, 50),
     (2, 125),
-    (3, 275)
+    (3, 275),
+    (4, 500),
+    (5, 750),
+    (6, 1000)
 ]
 
 def get_level(xp):
@@ -191,7 +250,7 @@ async def send_dm_or_channel_fallback(ctx, content=None, embed=None):
         if embed:
             await ctx.send(embed=embed)
         else:
-            await ctx.send(f"{ctx.author.mention}, I couldn’t send you a DM. Please enable DMs and try again.\n{content if content else ''}")
+            await ctx.send(f"{ctx.author.mention}, I couldn't send you a DM. Please enable DMs and try again.\n{content if content else ''}")
 
 # Function to check and award badges
 def check_badges(user_id):
@@ -233,7 +292,7 @@ async def missions_list(ctx):
 async def mission(ctx, action: str, *, mission_name: str):
     user_id = ctx.author.id
     if not mission_name:
-        await send_dm_or_channel_fallback(ctx, "Please specify the mission name, partner.")
+        await send_dm_or_channel_fallback(ctx, "Please specify the mission name, apprentice.")
         return
     found_mission = None
     for m in missions:
@@ -241,7 +300,7 @@ async def mission(ctx, action: str, *, mission_name: str):
             found_mission = m
             break
     if not found_mission:
-        await send_dm_or_channel_fallback(ctx, "No such mission exists. Check that mission name and try again, ya hear?")
+        await send_dm_or_channel_fallback(ctx, "No such mission exists. Check the mission name and try again apprentice.")
         return
     if action.lower() == "start":
         materials_text = "\n".join(found_mission["materials"])
@@ -264,13 +323,13 @@ async def mission(ctx, action: str, *, mission_name: str):
         set_user_xp(user_id, new_xp)
         await send_dm_or_channel_fallback(
             ctx, 
-            f"Congratulations! Your completion of **{found_mission['name']}** has been recorded! You gained {found_mission['xp_reward']} XP and now have {new_xp} XP."
+            f"Congratulations apprentice! Your completion of **{found_mission['name']}** has been recorded! You gained {found_mission['xp_reward']} XP and now have {new_xp} XP."
         )
         # Check for badge awards after mission completion and announce 'em publicly
         new_badges = check_badges(user_id)
         if new_badges:
             badges_text = ", ".join(new_badges)
-            await ctx.send(f"Yeehaw! {ctx.author.mention}, you've earned the following badge(s): {badges_text}")
+            await ctx.send(f"Huzzah! {ctx.author.mention}, you've earned the following badge(s): {badges_text}")
 
 # Command to show current XP
 @bot.command()
@@ -317,7 +376,7 @@ async def badges(ctx, user: discord.Member = None):
         badges_list = ", ".join(awarded)
         await ctx.send(f"{user.display_name} has earned the following badge(s): {badges_list}")
     else:
-        await ctx.send(f"{user.display_name} hasn't earned any badges yet. Keep questin', partner!")
+        await ctx.send(f"{user.display_name} hasn't earned any badges yet. Keep learning apprentice!")
 
 # Command to reset a user's quest data and XP (officer only)
 @bot.command()
@@ -335,10 +394,10 @@ async def reset_user(ctx, user: discord.Member):
 
 # Attendance command: mark attendance and award XP for club meetings (officer-only)
 @bot.command()
-async def mark_attendance(ctx, meeting_id: str, xp_amount: int = 10):
+async def mark_attendance(ctx, meeting_id: str, xp_amount: int = 30):
     officer_role = discord.utils.get(ctx.guild.roles, name="Officer")
     if officer_role not in ctx.author.roles:
-        await ctx.send("Y'all ain't got permission to mark attendance, partner!")
+        await ctx.send("You are not allowed to mark attendance apprentice.")
         return
     user_id = ctx.author.id
     date = datetime.now().strftime("%Y-%m-%d")
@@ -359,7 +418,7 @@ async def mark_attendance(ctx, meeting_id: str, xp_amount: int = 10):
 async def show_attendance(ctx, meeting_id: str = None, user: discord.Member = None):
     officer_role = discord.utils.get(ctx.guild.roles, name="Officer")
     if officer_role not in ctx.author.roles:
-        await ctx.send("Y'all ain't got permission to view attendance, partner!")
+        await ctx.send("You are not allowed to view attendance apprentice.")
         return
     if meeting_id:
         cursor.execute('SELECT user_id FROM attendance WHERE meeting_id = ?', (meeting_id,))
@@ -383,7 +442,7 @@ async def custom_help(ctx):
         color=discord.Color.blue()
     )
     embed.add_field(name="!missions_list", value="Lists all available missions. 🎯", inline=False)
-    embed.add_field(name="!mission <start|complete> <mission_name>", value="Start or complete a mission. (Completion is auto-approved.) 📝", inline=False)
+    embed.add_field(name="!mission <start|complete> <mission_name>", value="Start or complete a mission. 📝", inline=False)
     embed.add_field(name="!xp", value="Shows your current XP. 📈", inline=False)
     embed.add_field(name="!status", value="Displays your current level, completed quests, XP, and badges earned. 🏆", inline=False)
     embed.add_field(name="!roadmap", value="Shows a roadmap of all missions. 🗺️", inline=False)
@@ -391,11 +450,11 @@ async def custom_help(ctx):
     embed.add_field(name="!reset_user @User", value="Clears all quest history, badges, and resets XP for a user. (Officer-only)", inline=False)
     embed.add_field(name="!mark_attendance <meeting_id> [xp_amount]", value="Mark attendance for a meeting and gain XP. (Officer-only; Default XP is 10.)", inline=False)
     embed.add_field(name="!show_attendance [meeting_id|@User]", value="Shows attendance for a meeting or a user. (Officer-only)", inline=False)
-    embed.add_field(name="!help", value="Displays this very help message. ❓", inline=False)
+    embed.add_field(name="!help", value="Displays this help message. ❓", inline=False)
     embed.set_footer(text="Merlin the Wise • Your Guide in Questing")
     try:
         await ctx.author.send(embed=embed)
     except discord.Forbidden:
-        await ctx.send(f"{ctx.author.mention}, I couldn’t send you a DM. Please enable DMs and try again.")
+        await ctx.send(f"{ctx.author.mention}, I couldn't send you a DM. Please enable DMs and try again.")
 
 bot.run(MERLIN_BOT_TOKEN)
