@@ -254,6 +254,7 @@ async def send_dm_or_channel_fallback(ctx, content=None, embed=None):
 
 # Function to check and award badges
 def check_badges(user_id):
+    
     completed = set(user_completed_quests(user_id))
     awarded = set(user_awarded_badges(user_id))
     newly_awarded = []
@@ -292,7 +293,7 @@ async def missions_list(ctx):
 async def mission(ctx, action: str, *, mission_name: str):
     user_id = ctx.author.id
     if not mission_name:
-        await send_dm_or_channel_fallback(ctx, "Please specify the mission name, apprentice.")
+        await ctx.send("Please specify the mission name, apprentice.")
         return
     found_mission = None
     for m in missions:
@@ -300,7 +301,7 @@ async def mission(ctx, action: str, *, mission_name: str):
             found_mission = m
             break
     if not found_mission:
-        await send_dm_or_channel_fallback(ctx, "No such mission exists. Check the mission name and try again apprentice.")
+        await ctx.send("No such mission exists. Check the mission name and try again apprentice.")
         return
     if action.lower() == "start":
         materials_text = "\n".join(found_mission["materials"])
@@ -309,7 +310,7 @@ async def mission(ctx, action: str, *, mission_name: str):
             f"**Materials:**\n{materials_text}\n"
             f"**Completion Deed:** {found_mission['completion_deed']}"
         )
-        await send_dm_or_channel_fallback(ctx, msg)
+        await ctx.send(msg)
     elif action.lower() == "complete":
         completed = user_completed_quests(user_id)
         if found_mission["name"] in completed:
@@ -321,8 +322,7 @@ async def mission(ctx, action: str, *, mission_name: str):
         current_xp = get_user_xp(user_id)
         new_xp = current_xp + found_mission["xp_reward"]
         set_user_xp(user_id, new_xp)
-        await send_dm_or_channel_fallback(
-            ctx, 
+        await ctx.send( 
             f"Congratulations apprentice! Your completion of **{found_mission['name']}** has been recorded! You gained {found_mission['xp_reward']} XP and now have {new_xp} XP."
         )
         # Check for badge awards after mission completion and announce 'em publicly
@@ -336,7 +336,7 @@ async def mission(ctx, action: str, *, mission_name: str):
 async def xp(ctx):
     user_id = ctx.author.id
     user_current_xp = get_user_xp(user_id)
-    await send_dm_or_channel_fallback(ctx, f"You currently have {user_current_xp} XP.")
+    await ctx.send(f"You currently have {user_current_xp} XP.")
 
 # Command to display user status
 @bot.command()
@@ -355,7 +355,7 @@ async def status(ctx):
         f"**XP:** {user_current_xp}\n"
         f"**Badges Earned:** {badges_list}"
     )
-    await send_dm_or_channel_fallback(ctx, msg)
+    await ctx.send(msg)
 
 # Command to display a simple roadmap of missions
 @bot.command()
@@ -367,7 +367,7 @@ async def roadmap(ctx):
 
 # Command to list awarded badges for a user
 @bot.command()
-async def badges(ctx, user: discord.Member = None):
+async def show_badges(ctx, user: discord.Member = None):
     # Allow officers to view other users' badges; otherwise, show own badges
     if user is None:
         user = ctx.author
@@ -446,7 +446,7 @@ async def custom_help(ctx):
     embed.add_field(name="!xp", value="Shows your current XP. 📈", inline=False)
     embed.add_field(name="!status", value="Displays your current level, completed quests, XP, and badges earned. 🏆", inline=False)
     embed.add_field(name="!roadmap", value="Shows a roadmap of all missions. 🗺️", inline=False)
-    embed.add_field(name="!badges [@User]", value="Lists the badges earned by you or another user.", inline=False)
+    embed.add_field(name="!show_badges [@User]", value="Lists the badges earned by you or another user.", inline=False)
     embed.add_field(name="!reset_user @User", value="Clears all quest history, badges, and resets XP for a user. (Officer-only)", inline=False)
     embed.add_field(name="!mark_attendance <meeting_id> [xp_amount]", value="Mark attendance for a meeting and gain XP. (Officer-only; Default XP is 10.)", inline=False)
     embed.add_field(name="!show_attendance [meeting_id|@User]", value="Shows attendance for a meeting or a user. (Officer-only)", inline=False)
